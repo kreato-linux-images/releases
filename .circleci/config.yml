@@ -17,6 +17,7 @@ jobs:
       - run:
           name: "build rootfs"
           command: |
+            apt-get install build-essentials git -y
             git clone https://git.kreatea.space/kreato-linux/nyaastrap.git
             cd nyaastrap
             ./nyaastrap -g /out glibc gcc openssl busybox > .config
