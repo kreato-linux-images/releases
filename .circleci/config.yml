@@ -19,7 +19,7 @@ jobs:
           command: |
             apt-get update
             apt-get upgrade -y
-            apt-get install build-essential wget git -y
+            apt-get install build-essential wget git gawk bison python3 python-is-python3 -y
             wget https://git.kreatea.space/kreato-linux/nyaa/raw/branch/master/nyaa -O /usr/bin/nyaa 
             chmod +x /usr/bin/nyaa
             nyaa u
