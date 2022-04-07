@@ -31,18 +31,20 @@ jobs:
             cd /out || exit 1
             tar -czvf /release/kreato-linux-ggob.tar.gz *
             cd /
+     store_artifacts:
+         path: /release/kreato-linux-ggob.tar.gz
 
   publish-github-release:
     docker:
       - image: cibuilds/github:0.10
     steps:
       - attach_workspace:
-          at: ./release
+          at: ./artifacts
       - run:
           name: "Publish Release on GitHub"
           command: |
             VERSION=$(date +%D)
-            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./release/kreato-linux-ggob.tar.gz
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
