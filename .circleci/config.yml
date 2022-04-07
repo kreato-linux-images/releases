@@ -1,0 +1,55 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  build-rootfs:
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: ubuntu
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout
+      - run:
+          name: "build rootfs"
+          command: |
+            apt-get update
+            apt-get upgrade -y
+            apt-get install build-essential wget git gawk bison python3 python-is-python3 -y
+            wget https://git.kreatea.space/kreato-linux/nyaa/raw/branch/master/nyaa -O /usr/bin/nyaa 
+            chmod +x /usr/bin/nyaa
+            nyaa u
+            git clone https://git.kreatea.space/kreato-linux/nyaastrap.git
+            cd nyaastrap
+            ./nyaastrap -g /out glibc gcc openssl busybox > .config
+            ./nyaastrap -c
+            mkdir -p /release
+            cd /out || exit 1
+            tar -czvf /release/kreato-linux-ggob.tar.gz *
+
+  publish-github-release:
+    docker:
+      - image: cibuilds/github:0.10
+    steps:
+      - attach_workspace:
+          at: ./artifacts
+      - run:
+          name: "Publish Release on GitHub"
+          command: |
+            VERSION=$(date +%D)
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} /release/kreato-linux-ggob.tar.gz
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  rootfs-workflow:
+    jobs:
+      - build-rootfs
+      - publish-github-release:
+          requires:
+            - build-rootfs
+
