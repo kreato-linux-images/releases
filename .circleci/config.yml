@@ -22,6 +22,7 @@ jobs:
             apt-get install build-essential wget git -y
             wget https://git.kreatea.space/kreato-linux/nyaa/raw/branch/master/nyaa -O /usr/bin/nyaa 
             chmod +x /usr/bin/nyaa
+            nyaa u
             git clone https://git.kreatea.space/kreato-linux/nyaastrap.git
             cd nyaastrap
             ./nyaastrap -g /out glibc gcc openssl busybox > .config
