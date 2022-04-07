@@ -30,6 +30,7 @@ jobs:
             mkdir -p /release
             cd /out || exit 1
             tar -czvf /release/kreato-linux-ggob.tar.gz *
+            cd /
 
   publish-github-release:
     docker:
