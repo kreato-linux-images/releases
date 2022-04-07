@@ -31,7 +31,7 @@ jobs:
             cd /out || exit 1
             tar -czvf /release/kreato-linux-ggob.tar.gz *
             cd /
-     - store_artifacts:
+      - store_artifacts:
          path: /release/kreato-linux-ggob.tar.gz
 
 # Invoke jobs via workflows
