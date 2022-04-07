@@ -47,4 +47,7 @@ workflows:
   rootfs-workflow:
     jobs:
       - build-rootfs
-      - publish-github-release
+      - publish-github-release:
+          requires:
+            - build-rootfs
+
